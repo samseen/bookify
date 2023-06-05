@@ -2,11 +2,13 @@ package com.samseen.bookify.core.limit.interceptor;
 
 import com.samseen.bookify.core.JsonUtils;
 import com.samseen.bookify.core.response.ErrorResult;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateIntervalUnit;
 import org.redisson.api.RateType;
 import org.redisson.api.RedissonClient;
+import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -16,6 +18,8 @@ import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
+@Component
+@Slf4j
 public class RateLimitThrottleInterceptor implements HandlerInterceptor {
 
     private final RedissonClient redissonClient;
