@@ -24,7 +24,7 @@ public class JsonUtils {
         }
     }
 
-    public static <T> T toJson(String json, TypeReference<T> typeReference) {
+    public static <T> T fromJson(String json, TypeReference<T> typeReference) {
         if (Objects.nonNull(json) && StringUtils.isNotBlank(json)) {
             try {
                 return MAPPER.readValue(json, typeReference);
@@ -35,7 +35,7 @@ public class JsonUtils {
         return null;
     }
 
-    public static String fromJson(Object obj) {
+    public static String toJson(Object obj) {
         try {
             return MAPPER.writeValueAsString(obj);
         } catch (JsonProcessingException e) {

@@ -1,6 +1,7 @@
 package com.samseen.bookify.core.limit.interceptor;
 
 import com.samseen.bookify.core.JsonUtils;
+import com.samseen.bookify.core.response.ErrorResult;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateIntervalUnit;
