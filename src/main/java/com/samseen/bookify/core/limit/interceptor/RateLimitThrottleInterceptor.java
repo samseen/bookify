@@ -1,7 +1,9 @@
 package com.samseen.bookify.core.limit.interceptor;
 
-import org.flywaydb.core.internal.util.JsonUtils;
+import com.samseen.bookify.core.JsonUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RRateLimiter;
+import org.redisson.api.RateIntervalUnit;
 import org.redisson.api.RateType;
 import org.redisson.api.RedissonClient;
 import org.springframework.web.method.HandlerMethod;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 public class RateLimitThrottleInterceptor implements HandlerInterceptor {
 
@@ -45,7 +48,59 @@ public class RateLimitThrottleInterceptor implements HandlerInterceptor {
                         LocalDateTime.now().toString(), status, message, message, request.getServletPath()
                 )));
             }
+
+            String limitRate = String.join("/", limiter.getConfig().getRate().toString(),
+                    limiter.getConfig().getRateInterval().toString());
+            response.setHeader("X-Rate-Limit-Limt", limitRate);
+            response.setHeader("X-Rate-Limit-Remaining", String.valueOf(limiter.availablePermits()));
+            return isAcquired;
         }
-        return HandlerInterceptor.super.preHandle(request, response, handler);
+
+        return true;
+    }
+
+    public String getRateKey(RateLimit.Type type, HttpServletRequest request) {
+        switch (type) {
+            case IP:
+                return getIp(request);
+            default:
+                return getToken(request);
+        }
+    }
+
+    public String getIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (StringUtils.isNotEmpty(ip)) {
+            return ip;
+        }
+
+        ip = request.getHeader("X-Real-IP");
+        if (StringUtils.isNotEmpty(ip)) {
+            return ip;
+        }
+        return request.getRemoteHost();
+    }
+
+    public String getToken(HttpServletRequest request) {
+        String authorization = request.getHeader("x-api-key");
+        if (StringUtils.isNotEmpty(authorization)) {
+            return authorization.toUpperCase();
+        }
+        return getIp(request);
+    }
+
+    public RateIntervalUnit toTimeUnit(TimeUnit timeUnit) {
+        switch (timeUnit) {
+            case MINUTES:
+                return RateIntervalUnit.MINUTES;
+            case SECONDS:
+                return RateIntervalUnit.SECONDS;
+            case DAYS:
+                return RateIntervalUnit.DAYS;
+            case HOURS:
+                return RateIntervalUnit.HOURS;
+            default:
+                return RateIntervalUnit.MILLISECONDS;
+        }
     }
 }
