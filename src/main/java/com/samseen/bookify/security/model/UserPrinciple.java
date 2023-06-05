@@ -14,7 +14,7 @@ public class UserPrinciple implements UserDetails {
     private Merchant merchant;
     private User user;
 
-    public UserPrinciple(Merchant merchant, User user) {
+    public UserPrinciple(User user, Merchant merchant) {
         this.merchant = merchant;
         this.user = user;
     }
