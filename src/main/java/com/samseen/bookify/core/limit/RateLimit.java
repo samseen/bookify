@@ -1,4 +1,4 @@
-package com.samseen.bookify.core.limit.interceptor;
+package com.samseen.bookify.core.limit;
 
 import java.lang.annotation.*;
 import java.util.concurrent.TimeUnit;

@@ -1,6 +1,7 @@
 package com.samseen.bookify.core.limit.interceptor;
 
 import com.samseen.bookify.core.JsonUtils;
+import com.samseen.bookify.core.limit.RateLimit;
 import com.samseen.bookify.core.response.ErrorResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
